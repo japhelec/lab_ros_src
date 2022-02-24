@@ -8,14 +8,8 @@ from threading import Timer
 
 ## register node
 topic_cmd = rospy.Publisher('/tello/cmd_vel', Twist, queue_size=1)
-topic_takeoff = rospy.Publisher('/tello/takeoff', Empty, queue_size=1)
-topic_land = rospy.Publisher('/tello/land', Empty, queue_size=1)
-
 rospy.init_node('control_test', anonymous=True)
 
-## takeoff
-empty = Empty()
-topic_takeoff.publish(empty)
 rate = rospy.Rate(10) # 10hz
 
 ## prepare message
@@ -27,11 +21,11 @@ msg0.linear.z = 0
 
 ### test
 msg1 = Twist()
-msg1.linear.z = 1
+msg1.linear.z = 1 ## move upward
 msg2 = Twist()
-msg2.linear.x = 1
+msg2.linear.x = 1 ## move to the right of marker B
 msg3 = Twist()
-msg3.linear.y = 1
+msg3.linear.y = 1 ## move to the front of camera
 
 
 
@@ -43,32 +37,18 @@ def control():
         counter += 1
 
 
-        if counter <= 20:
+        if counter <= 15:
+            msg = msg2
+            topic_cmd.publish(msg)
+            rate.sleep()
+            continue     
+        
+        else: 
             msg = msg0
             topic_cmd.publish(msg)
             rate.sleep()
             continue
 
-        # if counter < 10:
-        #     msg = msg1
-        #     topic_cmd.publish(msg)
-        #     rate.sleep()
-        #     continue
-
-        # elif counter == 10:
-        #     msg = msg0
-        #     topic_cmd.publish(msg)
-        #     rate.sleep()
-        #     continue        
-        
-        else: 
-            # msg = msg0
-            # pub.publish(msg)
-            topic_land.publish(empty)
-
-
-
-t = Timer(5.0, control)
-t.start()
+control()
 
 
