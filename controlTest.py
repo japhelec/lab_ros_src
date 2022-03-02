@@ -65,6 +65,11 @@ def control():
             # msg = msg0
             # pub.publish(msg)
             topic_land.publish(empty)
+            break
+    
+    topic_land.publish(empty)
+    rospy.signal_shutdown("control terminated")
+
 
 
 
